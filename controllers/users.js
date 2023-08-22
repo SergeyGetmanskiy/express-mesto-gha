@@ -1,9 +1,10 @@
 const User = require('../models/user');
+const { ERR_BAD_REQUEST, ERR_NOT_FOUND, ERR_DEFAULT } = require('../utils/constants');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((e) => res.status(500).send({ message: e.message }));
+    .catch((e) => res.status(ERR_DEFAULT).send({ message: e.message }));
 };
 
 module.exports.getUserById = (req, res) => {
@@ -12,14 +13,14 @@ module.exports.getUserById = (req, res) => {
       if (user) {
         res.send({ data: user });
       } else {
-        res.status(404).send({ message: 'Пользователь по указанному _id не найден.' });
+        res.status(ERR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден.' });
       }
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные для поиска пользователя.' });
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные для поиска пользователя.' });
       }
-      return res.status(500).send({ message: e.message });
+      return res.status(ERR_DEFAULT).send({ message: e.message });
     });
 };
 
@@ -29,9 +30,9 @@ module.exports.createUser = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
       }
-      return res.status(500).send({ message: e.message });
+      return res.status(ERR_DEFAULT).send({ message: e.message });
     });
 };
 
@@ -48,9 +49,9 @@ module.exports.updateUserProfile = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
       }
-      return res.status(500).send({ message: e.message });
+      return res.status(ERR_DEFAULT).send({ message: e.message });
     });
 };
 
@@ -67,8 +68,8 @@ module.exports.updateUserAvatar = (req, res) => {
     .then((user) => res.send({ data: user }))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(400).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
+        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные при обновлении аватара.' });
       }
-      return res.status(500).send({ message: e.message });
+      return res.status(ERR_DEFAULT).send({ message: e.message });
     });
 };
