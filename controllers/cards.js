@@ -27,7 +27,12 @@ module.exports.deleteCard = (req, res) => {
         res.status(404).send({ message: 'Карточка с указанным _id не найдена.' });
       }
     })
-    .catch((e) => res.status(500).send({ message: e.message }));
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        return res.status(400).send({ message: 'Переданы некорректные данные для удаления карточки.' });
+      }
+      return res.status(500).send({ message: e.message });
+    });
 };
 
 module.exports.likeCard = (req, res) => Card.findByIdAndUpdate(
