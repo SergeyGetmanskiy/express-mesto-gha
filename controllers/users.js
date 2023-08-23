@@ -9,16 +9,14 @@ module.exports.getUsers = (req, res) => {
 
 module.exports.getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (user) {
-        res.send({ data: user });
-      } else {
-        res.status(ERR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден.' });
-      }
-    })
+    .orFail()
+    .then((user) => res.send({ data: user }))
     .catch((e) => {
       if (e.name === 'CastError') {
         return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные для поиска пользователя.' });
+      }
+      if (e.name === 'DocumentNotFoundError') {
+        return res.status(ERR_NOT_FOUND).send({ message: 'Пользователь по указанному _id не найден.' });
       }
       return res.status(ERR_DEFAULT).send({ message: e.message });
     });
@@ -27,10 +25,10 @@ module.exports.getUserById = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
   User.create({ name, about, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(201).send({ data: user }))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        return res.status(ERR_BAD_REQUEST).send({ message: 'Переданы некорректные данные при создании пользователя.' });
+        return res.status(ERR_BAD_REQUEST).send({ message: `Переданы некорректные данные при создании пользователя. ${e.message}` });
       }
       return res.status(ERR_DEFAULT).send({ message: e.message });
     });
