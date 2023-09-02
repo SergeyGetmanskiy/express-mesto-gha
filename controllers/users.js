@@ -9,20 +9,20 @@ const NotFoundError = require('../errors/NotFoundError');
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.status(200).send({ data: users }))
     .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
   User.find({ _id: req.user._id })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch(next);
 };
 
 module.exports.getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(new NotFoundError('Пользователь по указанному _id не найден.'))
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new BadRequestError('Переданы некорректные данные для поиска пользователя.'));
@@ -72,7 +72,7 @@ module.exports.updateUserProfile = (req, res, next) => {
       runValidators: true,
     },
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении профиля.'));
@@ -91,7 +91,7 @@ module.exports.updateUserAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new BadRequestError('Переданы некорректные данные при обновлении аватара.'));
@@ -114,6 +114,7 @@ module.exports.login = (req, res, next) => {
             return Promise.reject(new AuthError('Неверные e-mail или пароль.'));
           }
           const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+          res.status(200).send({ data: user });
           return res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
