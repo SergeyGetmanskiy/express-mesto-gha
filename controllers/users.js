@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET = 'super-secret' } = process.env;
 
 const AuthError = require('../errors/AuthError');
 const BadRequestError = require('../errors/BadRequestError');
@@ -124,7 +124,7 @@ module.exports.login = (req, res, next) => {
           }
           const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-secret');
           res.status(200).send({ user });
-          return res.cookie('jwt', token, {
+          return res.cookies('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
           })
