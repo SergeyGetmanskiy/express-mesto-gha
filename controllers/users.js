@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
+const { NODE_ENV = 'production', JWT_SECRET = 'a4d595b8b3f731b87e38ac325c90a23f02127f046e6d3f41dca21a0df9d692dd' } = process.env;
+
 const AuthError = require('../errors/AuthError');
 const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflctError');
@@ -122,7 +124,7 @@ module.exports.login = (req, res, next) => {
           if (!matched) {
             return Promise.reject(new AuthError('Неверные e-mail или пароль.'));
           }
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key');
+          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret');
           res.status(200).send({ data: user });
           return res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
