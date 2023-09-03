@@ -51,8 +51,14 @@ module.exports.createUser = (req, res, next) => {
       password: hash,
     }))
     .then((user) => {
-    // const noPassword = ({ password, ...rest }) => rest;
-      res.status(201).send({ data: user });
+      res.status(201).send({
+        data: {
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+        },
+      });
     })
     .catch((err) => {
       if (err.code === 11000) {
