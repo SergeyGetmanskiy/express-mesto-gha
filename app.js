@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 
 const mongoose = require('mongoose');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3000, DATABASE_URL = 'mongodb://127.0.0.1:27017/mestodb' } = process.env;
 
 const app = express();
 
@@ -18,7 +18,7 @@ const { login, createUser } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
 
-mongoose.connect('mongodb://127.0.0.1:27017/mestodb', {
+mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
 });
 

@@ -25,13 +25,11 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(new NotFoundError('Карточка с указанным _id не найдена.'))
     .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
-        return Promise.reject(new ForbiddenRequestError('Нельзя удалять чужие карточки!'));
+      if (!card) {
+        return Promise.reject(new NotFoundError('Карточка с указанным _id не найдена.'));
       }
-      return Card.findByIdAndRemove(req.params.cardId)
-        .then((removedCard) => res.send({ removedCard }));
+      return res.status(200).send({ card });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
