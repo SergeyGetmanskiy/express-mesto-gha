@@ -122,14 +122,8 @@ module.exports.login = (req, res, next) => {
           if (!matched) {
             return Promise.reject(new AuthError('Неверные e-mail или пароль.'));
           }
-          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-secret');
-          return res.cookie('jwt', token, {
-            maxAge: 3600000 * 24 * 7,
-            httpOnly: true,
-          })
-            .status(200)
-            .send({ user })
-            .end();
+          const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-secret', { expiresIn: '7d' });
+          return res.status(200).send({ token });
         });
     })
     .catch(next);
