@@ -124,7 +124,7 @@ module.exports.login = (req, res, next) => {
           }
           const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'super-secret');
           res.status(200).send({ user });
-          return res.cookies('jwt', token, {
+          return res.cookie('jwt', token, {
             maxAge: 3600000 * 24 * 7,
             httpOnly: true,
           })
