@@ -19,7 +19,7 @@ module.exports.getUser = (req, res, next) => {
   User.find({ _id: req.user._id })
     .then((user) => {
       console.log(user);
-      res.status(200).send([user]);
+      res.status(200).send(user[0]);
     })
     .catch(next);
 };
