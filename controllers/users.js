@@ -16,10 +16,10 @@ module.exports.getUsers = (req, res, next) => {
 };
 
 module.exports.getUser = (req, res, next) => {
-  User.find({ _id: req.user._id })
+  User.findOne({ _id: req.user._id })
     .then((user) => {
       console.log(user);
-      res.status(200).send(user[0]);
+      res.status(200).send(user);
     })
     .catch(next);
 };
