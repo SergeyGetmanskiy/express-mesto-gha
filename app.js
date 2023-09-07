@@ -18,6 +18,8 @@ const { login, createUser } = require('./controllers/users');
 
 const auth = require('./middlewares/auth');
 
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+
 mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
 });
@@ -25,6 +27,7 @@ mongoose.connect(DATABASE_URL, {
 app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 
 app.post(
   '/signin',
@@ -59,6 +62,7 @@ app.use('*', (req, res) => {
   res.status(404).send({ message: 'Страница не существует.' });
 });
 
+app.use(errorLogger);
 app.use(errors());
 
 app.use((err, req, res, next) => {
