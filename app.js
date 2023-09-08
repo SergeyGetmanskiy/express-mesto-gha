@@ -16,6 +16,8 @@ const { celebrate, Joi, errors } = require('celebrate');
 
 const { login, createUser } = require('./controllers/users');
 
+const cors = require('./middlewares/cors');
+
 const auth = require('./middlewares/auth');
 
 const { requestLogger, errorLogger } = require('./middlewares/logger');
@@ -23,6 +25,8 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 mongoose.connect(DATABASE_URL, {
   useNewUrlParser: true,
 });
+
+app.use(cors);
 
 app.use(helmet());
 app.use(bodyParser.json());
